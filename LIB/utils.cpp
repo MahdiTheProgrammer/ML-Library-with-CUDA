@@ -274,3 +274,7 @@ void Tensor::reshape(std::vector<int> new_shape){
         }
 
 }
+
+void requires_grad(bool requires){
+	require_grad = requires;
+}

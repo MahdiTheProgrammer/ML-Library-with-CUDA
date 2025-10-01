@@ -30,7 +30,7 @@ public:
 	float& operator[](const std::vector<int>& indices);
 	static Tensor matmul(const Tensor& t_A, const Tensor& t_B);
 	bool is_on_gpu() const;
-	bool requires_grad(bool requires_grad)
+	void requires_grad(bool requires)
 	static Tensor MatrixVectorAddition(const Tensor& t_A, const Tensor& t_B);
 
 private:
@@ -39,6 +39,6 @@ private:
 	std::vector<float> host_data;
 	float* device_data = nullptr;
 	bool on_gpu = false;
-	bool requires_grad = false;
+	bool require_grad = false;
 	int total_size;
 }
