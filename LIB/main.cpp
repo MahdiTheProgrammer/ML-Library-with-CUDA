@@ -7,24 +7,24 @@
 
 int  main(){
 //	std::vector<int> shape_A = {2,2,6,6};
-	std::vector<int> shape_B = {3,3,3};
-//	std::vector<int> shape_C = {10,5};
+	std::vector<int> shape_B = {2,30,300000};
+	std::vector<int> shape_C = {2,30,300000};
 //	Tensor t_A(shape_A);
 	Tensor t_B(shape_B);
-//	Tensor t_C(shape_C);
+	Tensor t_C(shape_C);
 //	std::vector<float> i_a = {1.0f, 2.0f, 3.0f, 4.0f};;
-//	t_C.to_device();
+	t_C.to_device();
 	t_B.to_device();
 	t_B.arrange(0.0,10.0);
-//	t_C.arrange(1.0,0.0);
+	t_C.arrange(1.0,0.0);
 //	t_B.arrange(0,2);
 //	t_A.from_list(i_a.data());
 //	t_B.from_list(i_b.data());
-//	Tensor out = Tensor::matmul(t_B,t_C);
+	Tensor out = Tensor::MatrixVectorAddition(t_B,t_C);
 //	out.print();
 //	std::cout<<"\n";
 //	t_B.add_padding(1,0);
-	t_B.print();
+	out.print();
 	std::cout<<"\n";
 //    	std::vector<int> shape = out.get_shape();
 //	std::cout<<"\n";

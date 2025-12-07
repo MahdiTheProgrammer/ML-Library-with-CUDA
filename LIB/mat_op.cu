@@ -1,4 +1,3 @@
-
 //Contains all CUDA kernels (e.g. matrixMultiply, ReLU)
 #include <iostream>
 #include <cuda_runtime.h>
@@ -75,24 +74,30 @@ Tensor Tensor::MatrixVectorAddition(const Tensor& t_A, const Tensor& t_b){
 
 	int len_vector = shape_b[shape_b.size()-1];
 
-	int dim = 1;
+	size_t dim = 1;
 	for(int i=0; i<shape_A.size()-2;i++){
 		dim*=shape_A[i];
 	}
 
-	int total_size_C = dim * shape_A[shape_A.size()-2] * shape_A[shape_A.size()-1];
+	size_t total_size_C = dim * shape_A[shape_A.size()-2] * shape_A[shape_A.size()-1];
 	float *add_C;
 	float *h_C = new float[total_size_C];
 
 	cudaMalloc((void**)&add_C,total_size_C * sizeof(float));
 
 	int threads_per_block = 32*32;
-	int num_rows = dim*shape_A[shape_A.size()-2];
+	size_t num_rows = dim*shape_A[shape_A.size()-2];
 
 	dim3 blockDim(threads_per_block);
 	dim3 gridDim((num_rows+threads_per_block-1)/threads_per_block);
 
 	matvecadd<<<gridDim, blockDim>>>(add_A, add_b, add_C, len_vector, num_rows);
+
+	cudaError_t err = cudaGetLastError();
+	if (err != cudaSuccess) {
+   		 printf("Kernel launch error: %s\n", cudaGetErrorString(err));
+	}
+
 	cudaDeviceSynchronize();
 
 	cudaMemcpy(h_C, add_C, total_size_C * sizeof(float), cudaMemcpyDeviceToHost);
