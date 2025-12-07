@@ -31,7 +31,7 @@ public:
 	static Tensor matmul(const Tensor& t_A, const Tensor& t_B);
 	bool is_on_gpu() const;
 	void requires_grad(bool requires);
-	static Tensor MatrixVectorAddition(const Tensor& t_A, const Tensor& t_B);
+	static Tensor MatrixAddition(const Tensor& t_A, const Tensor& t_B);
 
 private:
 	std::vector<int> shape;

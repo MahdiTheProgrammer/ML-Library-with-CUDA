@@ -19,14 +19,13 @@ __global__ void matrixmultiplication(float *t_A, float *t_B, float *c, int batch
 	}
 }
 
-__global__ void matvecadd(float *t_A, float *t_b,float *output, int len_vector, int total_rows){
+__global__ void matadd(float *t_A, float *t_b,float *output, int num_threads){
 
-	int row = blockIdx.x * blockDim.x + threadIdx.x;
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 
-	if (row < total_rows) {
-		for (int j = 0; j < len_vector; ++j) {
-			output[row * len_vector + j] = t_A[row * len_vector + j] +  t_b[j];
-    		}
+	if (idx < num_threads) {
+		output[idx] = t_A[idx] +  t_b[idx];
+
 	}
 }
 
@@ -64,34 +63,30 @@ Tensor Tensor::matmul(const Tensor& t_A, const Tensor& t_B){
 }
 
 
-Tensor Tensor::MatrixVectorAddition(const Tensor& t_A, const Tensor& t_b){
+Tensor Tensor::MatrixAddition(const Tensor& t_A, const Tensor& t_B){
 
 	float* add_A = t_A.device_address();
-	float* add_b = t_b.device_address();
+	float* add_B = t_B.device_address();
 
 	std::vector<int> shape_A = t_A.get_shape();
-	std::vector<int> shape_b = t_b.get_shape();
+	std::vector<int> shape_B = t_B.get_shape();
 
-	int len_vector = shape_b[shape_b.size()-1];
-
-	size_t dim = 1;
-	for(int i=0; i<shape_A.size()-2;i++){
-		dim*=shape_A[i];
+	size_t num_threads = 1;
+	for(int i=0; i<shape_A.size();i++){
+		num_threads*=shape_A[i];
 	}
 
-	size_t total_size_C = dim * shape_A[shape_A.size()-2] * shape_A[shape_A.size()-1];
 	float *add_C;
-	float *h_C = new float[total_size_C];
+	float *h_C = new float[num_threads];
 
-	cudaMalloc((void**)&add_C,total_size_C * sizeof(float));
+	cudaMalloc((void**)&add_C,num_threads * sizeof(float));
 
 	int threads_per_block = 32*32;
-	size_t num_rows = dim*shape_A[shape_A.size()-2];
 
 	dim3 blockDim(threads_per_block);
-	dim3 gridDim((num_rows+threads_per_block-1)/threads_per_block);
+	dim3 gridDim((num_threads+threads_per_block-1)/threads_per_block);
 
-	matvecadd<<<gridDim, blockDim>>>(add_A, add_b, add_C, len_vector, num_rows);
+	matadd<<<gridDim, blockDim>>>(add_A, add_B, add_C, num_threads);
 
 	cudaError_t err = cudaGetLastError();
 	if (err != cudaSuccess) {
@@ -100,7 +95,7 @@ Tensor Tensor::MatrixVectorAddition(const Tensor& t_A, const Tensor& t_b){
 
 	cudaDeviceSynchronize();
 
-	cudaMemcpy(h_C, add_C, total_size_C * sizeof(float), cudaMemcpyDeviceToHost);
+	cudaMemcpy(h_C, add_C, num_threads * sizeof(float), cudaMemcpyDeviceToHost);
 	cudaFree(add_C);
 
 	Tensor output(shape_A);
