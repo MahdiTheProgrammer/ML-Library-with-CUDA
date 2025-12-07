@@ -7,8 +7,8 @@
 
 int  main(){
 //	std::vector<int> shape_A = {2,2,6,6};
-	std::vector<int> shape_B = {2,300,30000};
-	std::vector<int> shape_C = {2,300,30000};
+	std::vector<int> shape_B = {2,2,3};
+	std::vector<int> shape_C = {2,3,2};
 	// std::vector<int> shape_B = {2,2,2};
 	// std::vector<int> shape_C = {2,2,2};
 //	Tensor t_A(shape_A);
@@ -22,15 +22,15 @@ int  main(){
 //	t_B.arrange(0,2);
 //	t_A.from_list(i_a.data());
 //	t_B.from_list(i_b.data());
-	Tensor out = Tensor::MatrixAddition(t_B,t_C);
+	Tensor out = Tensor::matmul(t_B,t_C);
 //	out.print();
 //	std::cout<<"\n";
 //	t_B.add_padding(1,0);
-	// t_B.print();
-	// std::cout<<"DONE"<<"\n\n";
-	// t_C.print();	
-	// std::cout<<"DONE"<<"\n\n";
-	// out.print();
+	t_B.print();
+	std::cout<<"DONE"<<"\n\n";
+	t_C.print();	
+	std::cout<<"DONE"<<"\n\n";
+	out.print();
 	std::cout<<"DONE"<<"\n\n";
 //    	std::vector<int> shape = out.get_shape();
 //	std::cout<<"\n";
