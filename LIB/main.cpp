@@ -22,7 +22,7 @@ int  main(){
 //	t_B.arrange(0,2);
 //	t_A.from_list(i_a.data());
 //	t_B.from_list(i_b.data());
-	Tensor out = Tensor::matmul(t_B,t_C);
+	Tensor out = Tensor::matmul2(t_B,t_C);
 //	out.print();
 //	std::cout<<"\n";
 //	t_B.add_padding(1,0);

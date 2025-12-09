@@ -28,7 +28,7 @@ public:
 	const std::vector<float>& get_data();
 	float* device_address() const;
 	float& operator[](const std::vector<int>& indices);
-	static Tensor matmul(const Tensor& t_A, const Tensor& t_B);
+	static Tensor matmul2(const Tensor& t_A, const Tensor& t_B);
 	bool is_on_gpu() const;
 	void requires_grad(bool requires);
 	static Tensor MatrixAddition(const Tensor& t_A, const Tensor& t_B);
